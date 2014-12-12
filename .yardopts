@@ -1,0 +1,3 @@
+--markup markdown
+--title "SES Backtrace Documentation"
+lib/backtrace.rb
