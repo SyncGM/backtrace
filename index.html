@@ -66,13 +66,14 @@
 <h2>Summary</h2>
 
 <p>This script provides the missing full error backtrace for RGSS3 as well as
-a number of features related to exception handling for debugging. Normally,
-the error message raised when an exception is encountered provides only the
-exception information without providing the backtrace; this script rectifies
-that by displaying the backtrace within the RGSS Console when applicable,
-potentially logging the backtrace to a file, and allowing developers to play
-games with critical bugs without causing the entire engine to crash by
-optionally swallowing all exceptions.</p>
+a number of features related to exception handling for debugging.</p>
+
+<p>Normally, the error message given when an exception is encountered provides
+only the exception information without providing the backtrace; this script
+rectifies that by displaying the backtrace within the RGSS Console when
+applicable, potentially logging the backtrace to a file, and allowing script
+developers to test games with critical bugs without causing the entire engine
+to crash by optionally swallowing all exceptions.</p>
 
 <h2>License</h2>
 
@@ -82,12 +83,17 @@ information.</p>
 
 <h2>Installation</h2>
 
-<p>Place this script below Materials, but above Main. Place this script below
-any other script which aliases <code>SceneManager.run</code> for maximum compatibility.</p>
+<p>Place this script anywhere below the SES Core (v2.0 or higher) script (if
+you are using it) or the Materials header, but above Main. This script does
+not require the SES Core, but it is highly recommended.</p>
+
+<p>Place this script below any script which aliases or overwrites the 
+<code>Game_Interpreter#update</code> or <code>SceneManager.run</code> methods for maximum
+compatibility.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Thu Dec 11 22:35:14 2014 by
+  Generated on Fri Dec 12 17:32:29 2014 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>
