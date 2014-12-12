@@ -1,16 +1,18 @@
 #--
 # Backtrace v1.0 by Solistra
 # =============================================================================
+# 
 # Summary
 # -----------------------------------------------------------------------------
 #   This script provides the missing full error backtrace for RGSS3 as well as
-# a number of features related to exception handling for debugging. Normally,
-# the error message raised when an exception is encountered provides only the
-# exception information without providing the backtrace; this script rectifies
-# that by displaying the backtrace within the RGSS Console when applicable,
-# potentially logging the backtrace to a file, and allowing developers to play
-# games with critical bugs without causing the entire engine to crash by
-# optionally swallowing all exceptions.
+# a number of features related to exception handling for debugging.
+# 
+#   Normally, the error message given when an exception is encountered provides
+# only the exception information without providing the backtrace; this script
+# rectifies that by displaying the backtrace within the RGSS Console when
+# applicable, potentially logging the backtrace to a file, and allowing script
+# developers to test games with critical bugs without causing the entire engine
+# to crash by optionally swallowing all exceptions.
 # 
 # License
 # -----------------------------------------------------------------------------
@@ -20,8 +22,13 @@
 # 
 # Installation
 # -----------------------------------------------------------------------------
-#   Place this script below Materials, but above Main. Place this script below
-# any other script which aliases `SceneManager.run` for maximum compatibility.
+#   Place this script anywhere below the SES Core (v2.0 or higher) script (if
+# you are using it) or the Materials header, but above Main. This script does
+# not require the SES Core, but it is highly recommended.
+# 
+#   Place this script below any script which aliases or overwrites the 
+# `Game_Interpreter#update` or `SceneManager.run` methods for maximum
+# compatibility.
 # 
 #++
 
@@ -53,6 +60,12 @@ module SES
     # file; may be either `true` or `false`.
     LOG_EXCEPTIONS = false
     
+    # Whether to append to the log file or overwrite previous contents whenever
+    # an exception is handled; set to `true` to append to the log file, `false`
+    # to overwrite its contents. The value of this constant only applies if
+    # {LOG_EXCEPTIONS} has been set to a `true` value.
+    APPEND_LOG = true
+    
     # The log file exception information is written to if the {LOG_EXCEPTIONS}
     # constant is set to a `true` value. The placement of this file is relative
     # to your project's root directory.
@@ -62,7 +75,7 @@ module SES
     # one is handled if {RAISE_EXCEPTIONS} is set to a `false` value. This may
     # be useful to alert developers or play testers at the exact moment an
     # exception occurs.
-    ALERT_ON_RAISE = false
+    ALERT = false
     
     # =========================================================================
     # END CONFIGURATION
@@ -89,13 +102,10 @@ module SES
         trace << line.gsub(/^{(\d+)}/) { $RGSS_SCRIPTS[$1.to_i][1] }
       end
       print_caught(ex, trace)
-      File.open(LOG_FILE, 'a') { |f| print(ex, trace, f) } if LOG_EXCEPTIONS
-      if RAISE_EXCEPTIONS
-        raise(ex)
-      else
-        alert_caught(ex) if ALERT_ON_RAISE
-        retry
-      end
+      File.open(LOG_FILE, APPEND_LOG ? 'a' : 'w') do |file|
+        print_caught(ex, trace, file)
+      end if LOG_EXCEPTIONS
+      RAISE_EXCEPTIONS ? raise(ex) : (alert_caught(ex) if ALERT ; retry)
     end
     
     # Prints exception information and a full backtrace to a specified stream
@@ -133,6 +143,9 @@ end
 # =============================================================================
 # Module handling scene transitions and the running status of the game.
 module SceneManager
+  # Register the overwritten method only if the SES Core is installed.
+  class << self ; overwrite :run if respond_to?(:overwrite) ; end
+    
   # The starting point of a running RGSS3 game.
   # 
   # @note This method was overridden out of necessity -- the original method
