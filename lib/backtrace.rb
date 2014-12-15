@@ -26,7 +26,7 @@
 # you are using it) or the Materials header, but above Main. This script does
 # not require the SES Core, but it is highly recommended.
 # 
-#   Place this script below any script which aliases or overwrites the 
+#   Place this script below any script which aliases or overwrites the
 # `Game_Interpreter#update` or `SceneManager.run` methods for maximum
 # compatibility.
 # 
@@ -96,14 +96,9 @@ module SES
     rescue SystemExit
       exit
     rescue Exception => ex
-      trace = []
-      ex.backtrace.each do |line|
-        break if line[/^:1:/] # Information past this point is irrelevant.
-        trace << line.gsub(/^{(\d+)}/) { $RGSS_SCRIPTS[$1.to_i][1] }
-      end
-      print_caught(ex, trace)
+      print_caught(ex) if $TEST
       File.open(LOG_FILE, APPEND_LOG ? 'a' : 'w') do |file|
-        print_caught(ex, trace, file)
+        print_caught(ex, file)
       end if LOG_EXCEPTIONS
       RAISE_EXCEPTIONS ? raise(ex) : (alert_caught(ex) if ALERT ; retry)
     end
@@ -112,14 +107,16 @@ module SES
     # (standard error by default).
     # 
     # @param exception [Exception] the caught exception
-    # @param backtrace [Array<String>] the full exception backtrace
     # @param stream [#puts] the stream to write exception information to
     # @return [void]
-    def self.print_caught(exception, backtrace, stream = STDERR)
+    def self.print_caught(exception, stream = STDERR)
+      for line in exception.backtrace
+        break if line[/^:1:/] # Information past this point is irrelevant.
+        (trace ||= []) << line.gsub(/^{(\d+)}/) { $RGSS_SCRIPTS[$1.to_i][1] }
+      end
       msg =  Time.now.to_s << ' >> EXCEPTION CAUGHT <<'
       msg << "\n#{exception.class}: #{exception}.\nBacktrace:\n\t"
-      msg << (backtrace.join("\n\t"))
-      stream.puts msg
+      stream.puts msg << trace.join("\n\t")
     end
     
     # Provides a message box containing information about a handled exception.
@@ -128,7 +125,8 @@ module SES
     # @return [void]
     def self.alert_caught(exception)
       msg = "EXCEPTION CAUGHT:\n#{exception}\n\n"
-      msgbox(msg << 'Check the RGSS Console for more information.')
+      msg << 'Check the RGSS Console for more information.' if $TEST
+      msgbox(msg)
     end
     
     # Register this script with the SES Core if it exists.
