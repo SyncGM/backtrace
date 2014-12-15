@@ -252,7 +252,7 @@ exception occurs.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#print_caught-class_method" title="print_caught (class method)">+ (void) <strong>print_caught</strong>(exception, backtrace, stream = STDERR) </a>
+      <a href="#print_caught-class_method" title="print_caught (class method)">+ (void) <strong>print_caught</strong>(exception, stream = STDERR) </a>
     
 
     
@@ -348,17 +348,19 @@ exception occurs.</p>
       <pre class="lines">
 
 
+126
+127
+128
 129
-130
-131
-132</pre>
+130</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 129</span>
+      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_alert_caught'>alert_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_exception'>exception</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EXCEPTION CAUGHT:\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exception'>exception</span><span class='rbrace'>}</span><span class='tstring_content'>\n\n</span><span class='tstring_end'>&quot;</span></span>
-  <span class='id identifier rubyid_msgbox'>msgbox</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>Check the RGSS Console for more information.</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>Check the RGSS Console for more information.</span><span class='tstring_end'>'</span></span> <span class='kw'>if</span> <span class='gvar'>$TEST</span>
+  <span class='id identifier rubyid_msgbox'>msgbox</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -368,7 +370,7 @@ exception occurs.</p>
       <div class="method_details ">
   <h3 class="signature " id="print_caught-class_method">
   
-    + (<tt>void</tt>) <strong>print_caught</strong>(exception, backtrace, stream = STDERR) 
+    + (<tt>void</tt>) <strong>print_caught</strong>(exception, stream = STDERR) 
   
 
   
@@ -403,21 +405,6 @@ exception occurs.</p>
   
     <li>
       
-        <span class='name'>backtrace</span>
-      
-      
-        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the full exception backtrace</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
         <span class='name'>stream</span>
       
       
@@ -442,21 +429,27 @@ exception occurs.</p>
       <pre class="lines">
 
 
+112
+113
+114
+115
+116
+117
 118
 119
-120
-121
-122
-123</pre>
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 118</span>
+      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 112</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_exception'>exception</span><span class='comma'>,</span> <span class='id identifier rubyid_backtrace'>backtrace</span><span class='comma'>,</span> <span class='id identifier rubyid_stream'>stream</span> <span class='op'>=</span> <span class='const'>STDERR</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_exception'>exception</span><span class='comma'>,</span> <span class='id identifier rubyid_stream'>stream</span> <span class='op'>=</span> <span class='const'>STDERR</span><span class='rparen'>)</span>
+  <span class='kw'>for</span> <span class='id identifier rubyid_line'>line</span> <span class='kw'>in</span> <span class='id identifier rubyid_exception'>exception</span><span class='period'>.</span><span class='id identifier rubyid_backtrace'>backtrace</span>
+    <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_line'>line</span><span class='lbracket'>[</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^:1:</span><span class='regexp_end'>/</span></span><span class='rbracket'>]</span> <span class='comment'># Information past this point is irrelevant.
+</span>    <span class='lparen'>(</span><span class='id identifier rubyid_trace'>trace</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_line'>line</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^{(\d+)}</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='gvar'>$RGSS_SCRIPTS</span><span class='lbracket'>[</span><span class='backref'>$1</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span>  <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'> &gt;&gt; EXCEPTION CAUGHT &lt;&lt;</span><span class='tstring_end'>'</span></span>
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exception'>exception</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rbrace'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exception'>exception</span><span class='rbrace'>}</span><span class='tstring_content'>.\nBacktrace:\n\t</span><span class='tstring_end'>&quot;</span></span>
-  <span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='lparen'>(</span><span class='id identifier rubyid_backtrace'>backtrace</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n\t</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_stream'>stream</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_msg'>msg</span>
+  <span class='id identifier rubyid_stream'>stream</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_trace'>trace</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n\t</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -522,12 +515,7 @@ in the <span class='object_link'><a href="" title="SES::Backtrace (module)">SES:
 101
 102
 103
-104
-105
-106
-107
-108
-109</pre>
+104</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 89</span>
@@ -542,14 +530,9 @@ in the <span class='object_link'><a href="" title="SES::Backtrace (module)">SES:
 <span class='kw'>rescue</span> <span class='const'>SystemExit</span>
   <span class='id identifier rubyid_exit'>exit</span>
 <span class='kw'>rescue</span> <span class='const'>Exception</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ex'>ex</span>
-  <span class='id identifier rubyid_trace'>trace</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_backtrace'>backtrace</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_line'>line</span><span class='op'>|</span>
-    <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_line'>line</span><span class='lbracket'>[</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^:1:</span><span class='regexp_end'>/</span></span><span class='rbracket'>]</span> <span class='comment'># Information past this point is irrelevant.
-</span>    <span class='id identifier rubyid_trace'>trace</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_line'>line</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^{(\d+)}</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='gvar'>$RGSS_SCRIPTS</span><span class='lbracket'>[</span><span class='backref'>$1</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
-  <span class='kw'>end</span>
-  <span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='comma'>,</span> <span class='id identifier rubyid_trace'>trace</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='gvar'>$TEST</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='const'>LOG_FILE</span><span class='comma'>,</span> <span class='const'>APPEND_LOG</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>a</span><span class='tstring_end'>'</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>w</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_file'>file</span><span class='op'>|</span>
-    <span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='comma'>,</span> <span class='id identifier rubyid_trace'>trace</span><span class='comma'>,</span> <span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='comma'>,</span> <span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
   <span class='kw'>end</span> <span class='kw'>if</span> <span class='const'>LOG_EXCEPTIONS</span>
   <span class='const'>RAISE_EXCEPTIONS</span> <span class='op'>?</span> <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lparen'>(</span><span class='id identifier rubyid_alert_caught'>alert_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='const'>ALERT</span> <span class='semicolon'>;</span> <span class='kw'>retry</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -563,7 +546,7 @@ in the <span class='object_link'><a href="" title="SES::Backtrace (module)">SES:
 </div>
 
     <div id="footer">
-  Generated on Fri Dec 12 17:32:30 2014 by
+  Generated on Mon Dec 15 16:14:45 2014 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>
