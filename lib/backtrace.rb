@@ -100,7 +100,12 @@ module SES
       File.open(LOG_FILE, APPEND_LOG ? 'a' : 'w') do |file|
         print_caught(ex, file)
       end if LOG_EXCEPTIONS
-      RAISE_EXCEPTIONS ? raise(ex) : (alert_caught(ex) if ALERT ; retry)
+      if RAISE_EXCEPTIONS
+        raise(ex)
+      else
+        alert_caught(ex) if ALERT
+        retry
+      end
     end
     
     # Prints exception information and a full backtrace to a specified stream
