@@ -1,5 +1,5 @@
 #--
-# Backtrace v1.1 by Solistra
+# Backtrace v1.2 by Solistra
 # =============================================================================
 # 
 # Summary
@@ -52,7 +52,7 @@ module SES
     # or game developers for debugging purposes, but may cause game instability
     # (or other odd behaviors).
     # 
-    # **It is highly recommended that you set this constant to `false` before
+    # **It is highly recommended that you set this constant to `true` before
     # releasing any version of your project.**
     RAISE_EXCEPTIONS = true
     
@@ -89,23 +89,31 @@ module SES
     def self.with_exception_handling
       yield
     rescue RGSSReset
-      # NOTE: This block assumes that `rgss_main` has the default block given
-      # to it by the editor -- this is generally a reasonable assumption.
-      Graphics.transition(10)
-      SceneManager.run
+      reset
     rescue SystemExit
       exit
     rescue Exception => ex
       print_caught(ex) if $TEST
-      File.open(LOG_FILE, APPEND_LOG ? 'a' : 'w') do |file|
-        print_caught(ex, file)
-      end if LOG_EXCEPTIONS
+      log_caught(ex) if LOG_EXCEPTIONS
       if RAISE_EXCEPTIONS
         raise(ex)
       else
         alert_caught(ex) if ALERT
         retry
       end
+    end
+    
+    # Resets the game in a manner similar to the way the default `rgss_main`
+    # loop. This method may be aliased or overwritten to provide customized
+    # reset handling via F12 or a raised `RGSSReset` exception.
+    # 
+    # @note This method assumes that `rgss_main` has the default block given to
+    #   it by the editor -- this is generally a reasonable assumption.
+    # 
+    # @return [void]
+    def self.reset
+      Graphics.transition(10)
+      SceneManager.run
     end
     
     # Prints exception information and a full backtrace to a specified stream
@@ -124,6 +132,21 @@ module SES
       stream.puts msg << trace.join("\n\t")
     end
     
+    # Logs exception information and a full backtrace to the log file specified
+    # by {LOG_FILE}. Exceptions are appended to the log if the {APPEND_LOG}
+    # constant is set to a `true` value, otherwise the log will only contain a
+    # record of the last encountered exception.
+    # 
+    # @note The actual logging of information is done via the {.print_caught}
+    #   method.
+    # 
+    # @param exception [Exception] the caught exception
+    # @return [void]
+    # @see .print_caught
+    def self.log_caught(exception)
+      File.open(LOG_FILE, APPEND_LOG ? 'a' : 'w') { |f| print_caught(ex, f) }
+    end
+    
     # Provides a message box containing information about a handled exception.
     # 
     # @param exception [Exception] the caught exception
@@ -137,7 +160,7 @@ module SES
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
       # Script metadata.
-      Description = Script.new(:Backtrace, 1.1, :Solistra)
+      Description = Script.new(:Backtrace, 1.2, :Solistra)
       Register.enter(Description)
     end
   end
