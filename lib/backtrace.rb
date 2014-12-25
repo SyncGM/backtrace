@@ -104,8 +104,9 @@ module SES
     end
     
     # Resets the game in a manner similar to the way the default `rgss_main`
-    # loop. This method may be aliased or overwritten to provide customized
-    # reset handling via F12 or a raised `RGSSReset` exception.
+    # loop handles resetting. This method may be aliased or overwritten to
+    # provide customized reset handling via F12 or a raised `RGSSReset`
+    # exception.
     # 
     # @note This method assumes that `rgss_main` has the default block given to
     #   it by the editor -- this is generally a reasonable assumption.
