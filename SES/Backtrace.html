@@ -112,7 +112,7 @@ constant is set to a <code>false</code> value; this may be useful for script aut
 or game developers for debugging purposes, but may cause game instability
 (or other odd behaviors).</p>
 
-<p><strong>It is highly recommended that you set this constant to <code>false</code> before
+<p><strong>It is highly recommended that you set this constant to <code>true</code> before
 releasing any version of your project.</strong></p>
 
 
@@ -207,7 +207,7 @@ exception occurs.</p>
 
 </div>
         </dt>
-        <dd><pre class="code"><span class='const'>Script</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='symbol'>:Backtrace</span><span class='comma'>,</span> <span class='float'>1.0</span><span class='comma'>,</span> <span class='symbol'>:Solistra</span><span class='rparen'>)</span></pre></dd>
+        <dd><pre class="code"><span class='const'>Script</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='symbol'>:Backtrace</span><span class='comma'>,</span> <span class='float'>1.2</span><span class='comma'>,</span> <span class='symbol'>:Solistra</span><span class='rparen'>)</span></pre></dd>
       
     </dl>
   
@@ -252,6 +252,29 @@ exception occurs.</p>
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#log_caught-class_method" title="log_caught (class method)">+ (void) <strong>log_caught</strong>(exception) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Logs exception information and a full backtrace to the log file specified by <span class='object_link'><a href="#LOG_FILE-constant" title="SES::Backtrace::LOG_FILE (constant)">LOG_FILE</a></span>.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#print_caught-class_method" title="print_caught (class method)">+ (void) <strong>print_caught</strong>(exception, stream = STDERR) </a>
     
 
@@ -267,6 +290,29 @@ exception occurs.</p>
 
   
     <span class="summary_desc"><div class='inline'><p>Prints exception information and a full backtrace to a specified stream (standard error by default).</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#reset-class_method" title="reset (class method)">+ (void) <strong>reset</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Resets the game in a manner similar to the way the default <code>rgss_main</code> loop handles resetting.</p>
 </div></span>
   
 </li>
@@ -348,19 +394,96 @@ exception occurs.</p>
       <pre class="lines">
 
 
-126
-127
-128
-129
-130</pre>
+155
+156
+157
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 155</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_alert_caught'>alert_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_exception'>exception</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>EXCEPTION CAUGHT:\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exception'>exception</span><span class='rbrace'>}</span><span class='tstring_content'>\n\n</span><span class='tstring_end'>&quot;</span></span>
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>Check the RGSS Console for more information.</span><span class='tstring_end'>'</span></span> <span class='kw'>if</span> <span class='gvar'>$TEST</span>
   <span class='id identifier rubyid_msgbox'>msgbox</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_caught-class_method">
+  
+    + (<tt>void</tt>) <strong>log_caught</strong>(exception) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>The actual logging of information is done via the <span class='object_link'><a href="#print_caught-class_method" title="SES::Backtrace.print_caught (method)">print_caught</a></span>
+method.</p>
+</div>
+  </div>
+
+<p class="note returns_void">This method returns an undefined value.</p><p>Logs exception information and a full backtrace to the log file specified
+by <span class='object_link'><a href="#LOG_FILE-constant" title="SES::Backtrace::LOG_FILE (constant)">LOG_FILE</a></span>. Exceptions are appended to the log if the <span class='object_link'><a href="#APPEND_LOG-constant" title="SES::Backtrace::APPEND_LOG (constant)">APPEND_LOG</a></span>
+constant is set to a <code>true</code> value, otherwise the log will only contain a
+record of the last encountered exception.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>exception</span>
+      
+      
+        <span class='type'>(<tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the caught exception</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#print_caught-class_method" title="SES::Backtrace.print_caught (method)">print_caught</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+147
+148
+149</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 147</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_log_caught'>log_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_exception'>exception</span><span class='rparen'>)</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='const'>LOG_FILE</span><span class='comma'>,</span> <span class='const'>APPEND_LOG</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>a</span><span class='tstring_end'>'</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>w</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span> <span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='comma'>,</span> <span class='id identifier rubyid_f'>f</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -429,18 +552,18 @@ exception occurs.</p>
       <pre class="lines">
 
 
-112
-113
-114
-115
-116
-117
-118
-119
-120</pre>
+126
+127
+128
+129
+130
+131
+132
+133
+134</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 112</span>
+      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_exception'>exception</span><span class='comma'>,</span> <span class='id identifier rubyid_stream'>stream</span> <span class='op'>=</span> <span class='const'>STDERR</span><span class='rparen'>)</span>
   <span class='kw'>for</span> <span class='id identifier rubyid_line'>line</span> <span class='kw'>in</span> <span class='id identifier rubyid_exception'>exception</span><span class='period'>.</span><span class='id identifier rubyid_backtrace'>backtrace</span>
@@ -450,6 +573,59 @@ exception occurs.</p>
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span>  <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'> &gt;&gt; EXCEPTION CAUGHT &lt;&lt;</span><span class='tstring_end'>'</span></span>
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exception'>exception</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rbrace'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exception'>exception</span><span class='rbrace'>}</span><span class='tstring_content'>.\nBacktrace:\n\t</span><span class='tstring_end'>&quot;</span></span>
   <span class='id identifier rubyid_stream'>stream</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_msg'>msg</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_trace'>trace</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n\t</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reset-class_method">
+  
+    + (<tt>void</tt>) <strong>reset</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>This method assumes that <code>rgss_main</code> has the default block given to
+it by the editor -- this is generally a reasonable assumption.</p>
+</div>
+  </div>
+
+<p class="note returns_void">This method returns an undefined value.</p><p>Resets the game in a manner similar to the way the default <code>rgss_main</code>
+loop handles resetting. This method may be aliased or overwritten to
+provide customized reset handling via F12 or a raised <code>RGSSReset</code>
+exception.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+115
+116
+117
+118</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/backtrace.rb', line 115</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_reset'>reset</span>
+  <span class='const'>Graphics</span><span class='period'>.</span><span class='id identifier rubyid_transition'>transition</span><span class='lparen'>(</span><span class='int'>10</span><span class='rparen'>)</span>
+  <span class='const'>SceneManager</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -523,18 +699,18 @@ in the <span class='object_link'><a href="" title="SES::Backtrace (module)">SES:
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_exception_handling'>with_exception_handling</span>
   <span class='kw'>yield</span>
 <span class='kw'>rescue</span> <span class='const'>RGSSReset</span>
-  <span class='comment'># NOTE: This block assumes that `rgss_main` has the default block given
-</span>  <span class='comment'># to it by the editor -- this is generally a reasonable assumption.
-</span>  <span class='const'>Graphics</span><span class='period'>.</span><span class='id identifier rubyid_transition'>transition</span><span class='lparen'>(</span><span class='int'>10</span><span class='rparen'>)</span>
-  <span class='const'>SceneManager</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span>
+  <span class='id identifier rubyid_reset'>reset</span>
 <span class='kw'>rescue</span> <span class='const'>SystemExit</span>
   <span class='id identifier rubyid_exit'>exit</span>
 <span class='kw'>rescue</span> <span class='const'>Exception</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ex'>ex</span>
   <span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='gvar'>$TEST</span>
-  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='const'>LOG_FILE</span><span class='comma'>,</span> <span class='const'>APPEND_LOG</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>a</span><span class='tstring_end'>'</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>w</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_file'>file</span><span class='op'>|</span>
-    <span class='id identifier rubyid_print_caught'>print_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='comma'>,</span> <span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-  <span class='kw'>end</span> <span class='kw'>if</span> <span class='const'>LOG_EXCEPTIONS</span>
-  <span class='const'>RAISE_EXCEPTIONS</span> <span class='op'>?</span> <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lparen'>(</span><span class='id identifier rubyid_alert_caught'>alert_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='const'>ALERT</span> <span class='semicolon'>;</span> <span class='kw'>retry</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_log_caught'>log_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='const'>LOG_EXCEPTIONS</span>
+  <span class='kw'>if</span> <span class='const'>RAISE_EXCEPTIONS</span>
+    <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_alert_caught'>alert_caught</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='const'>ALERT</span>
+    <span class='kw'>retry</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -546,7 +722,7 @@ in the <span class='object_link'><a href="" title="SES::Backtrace (module)">SES:
 </div>
 
     <div id="footer">
-  Generated on Mon Dec 15 16:14:45 2014 by
+  Generated on Wed Dec 24 19:44:12 2014 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>
