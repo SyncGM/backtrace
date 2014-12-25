@@ -1,5 +1,5 @@
 #--
-# Backtrace v1.2 by Solistra
+# Backtrace v1.3 by Solistra
 # =============================================================================
 # 
 # Summary
@@ -71,6 +71,12 @@ module SES
     # to your project's root directory.
     LOG_FILE = 'Backtrace.log'
     
+    # Whether or not to remove the log file created by a previous play testing
+    # session whenever the game is started; this may be useful for developers
+    # or play testers to ensure that the generated log files do not grow too
+    # large. May be either `true` or `false`.
+    RESET_LOG = false
+    
     # Creates an alert box containing information about a caught exception when
     # one is handled if {RAISE_EXCEPTIONS} is set to a `false` value. This may
     # be useful to alert developers or play testers at the exact moment an
@@ -80,6 +86,10 @@ module SES
     # =========================================================================
     # END CONFIGURATION
     # =========================================================================
+    
+    # Remove the log file if {RESET_LOG} is set to a `true` value and the log
+    # file exists.
+    File.delete(LOG_FILE) if RESET_LOG && File.exist?(LOG_FILE)
     
     # Runs the given block, handling all encountered exceptions. The exact form
     # of the exception handling is largely configured via the constants defined
@@ -117,6 +127,19 @@ module SES
       SceneManager.run
     end
     
+    # Returns cleaned backtrace information for a given exception by replacing
+    # the file information given by Ace with actual script names rather than
+    # their numeric placement in the Ace script editor.
+    # 
+    # @param exception [Exception] the exception to clean the backtrace for
+    # @return [Array<String>] the cleaned backtrace
+    def self.clean_backtrace_from(exception)
+      exception.backtrace.map do |line|
+        break if line[/^:1:/]
+        line.gsub(/^{(\d+)}/) { $RGSS_SCRIPTS[$1.to_i][1] }
+      end
+    end
+    
     # Prints exception information and a full backtrace to a specified stream
     # (standard error by default).
     # 
@@ -124,13 +147,9 @@ module SES
     # @param stream [#puts] the stream to write exception information to
     # @return [void]
     def self.print_caught(exception, stream = STDERR)
-      for line in exception.backtrace
-        break if line[/^:1:/] # Information past this point is irrelevant.
-        (trace ||= []) << line.gsub(/^{(\d+)}/) { $RGSS_SCRIPTS[$1.to_i][1] }
-      end
       msg =  Time.now.to_s << ' >> EXCEPTION CAUGHT <<'
       msg << "\n#{exception.class}: #{exception}.\nBacktrace:\n\t"
-      stream.puts msg << trace.join("\n\t")
+      stream.puts msg << clean_backtrace_from(exception).join("\n\t")
     end
     
     # Logs exception information and a full backtrace to the log file specified
@@ -145,7 +164,9 @@ module SES
     # @return [void]
     # @see .print_caught
     def self.log_caught(exception)
-      File.open(LOG_FILE, APPEND_LOG ? 'a' : 'w') { |f| print_caught(ex, f) }
+      File.open(LOG_FILE, APPEND_LOG ? 'a' : 'w') do |file|
+        print_caught(exception, file)
+      end
     end
     
     # Provides a message box containing information about a handled exception.
@@ -161,7 +182,7 @@ module SES
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
       # Script metadata.
-      Description = Script.new(:Backtrace, 1.2, :Solistra)
+      Description = Script.new(:Backtrace, 1.3, :Solistra)
       Register.enter(Description)
     end
   end
