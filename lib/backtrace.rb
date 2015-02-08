@@ -114,18 +114,25 @@ module SES
     end
     
     # Resets the game in a manner similar to the way the default `rgss_main`
-    # loop handles resetting. This method may be aliased or overwritten to
-    # provide customized reset handling via F12 or a raised `RGSSReset`
-    # exception.
-    # 
-    # @note This method assumes that `rgss_main` has the default block given to
-    #   it by the editor -- this is generally a reasonable assumption.
+    # loop handles resetting.
     # 
     # @return [void]
+    # @see #reset_block=
     def self.reset
       [Audio, Graphics].each(&:__reset__)
-      Graphics.transition(20)
-      SceneManager.run
+      @reset ? TOPLEVEL_BINDING.instance_exec(&@reset) : SceneManager.run
+    end
+    
+    # Assigns the reset block for this module to the given `Proc` object.
+    # 
+    # @note This method is automatically called by `rgss_main` -- only call
+    #   this manually if you are not using the standard `rgss_main` loop and
+    #   wish to customize the behavior of an F12 reset.
+    # 
+    # @param proc [Proc] the `Proc` to execute when an F12 reset is handled
+    # @return [Proc]
+    def self.reset_block=(proc)
+      @reset = proc
     end
     
     # Returns cleaned backtrace information for a given exception by replacing
@@ -235,5 +242,26 @@ class Game_Interpreter
     # commands.
     @index += 1
     create_fiber
+  end
+end
+# Object
+# =============================================================================
+# Superclass of all objects except `BasicObject`.
+class Object
+  # Aliased to automatically assign the given block as the reset block for the
+  # {SES::Backtrace} module via {SES::Backtrace.reset_block=}.
+  # 
+  # @see #rgss_main
+  alias_method :ses_backtrace_obj_main, :rgss_main
+  
+  # Evaluates the provided block one time only.
+  # 
+  # Detects a reset within a block with a press of the F12 key and returns to
+  # the beginning if reset.
+  # 
+  # @return [void]
+  def rgss_main(*args, &block)
+    SES::Backtrace.reset_block = block
+    ses_backtrace_obj_main(*args, &block)
   end
 end
