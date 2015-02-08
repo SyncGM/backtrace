@@ -123,7 +123,7 @@ module SES
     # 
     # @return [void]
     def self.reset
-      [Audio, Graphics].each(&:update)
+      [Audio, Graphics].each(&:__reset__)
       Graphics.transition(20)
       SceneManager.run
     end
