@@ -143,7 +143,7 @@ module SES
     # @return [Array<String>] the cleaned backtrace
     def self.clean_backtrace_from(exception)
       exception.backtrace.map do |line|
-        line.gsub(/^{(\d+)}/) { $RGSS_SCRIPTS[$1.to_i][1] }
+        line.sub(/^{(\d+)}/) { $RGSS_SCRIPTS[$1.to_i][1] }
       end
     end
     
