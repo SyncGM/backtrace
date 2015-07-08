@@ -27,8 +27,7 @@
 # not require the SES Core, but it is highly recommended.
 # 
 #   Place this script below any script which aliases or overwrites the
-# `Game_Interpreter#update` or `SceneManager.run` methods for maximum
-# compatibility.
+# `Game_Interpreter#update` method for maximum compatibility.
 # 
 #++
 
@@ -154,7 +153,7 @@ module SES
     # @param stream [#puts] the stream to write exception information to
     # @return [void]
     def self.print_caught(exception, stream = STDERR)
-      msg =  Time.now.to_s << ' >> EXCEPTION CAUGHT <<'
+      msg =  "#{Time.now} >> EXCEPTION CAUGHT <<"
       msg << "\n#{exception.class}: #{exception}.\nBacktrace:\n\t"
       stream.puts msg << clean_backtrace_from(exception).join("\n\t")
     end
@@ -192,28 +191,6 @@ module SES
       Description = Script.new(:Backtrace, 1.4, :Solistra)
       Register.enter(Description)
     end
-  end
-end
-# SceneManager
-# =============================================================================
-# Module handling scene transitions and the running status of the game.
-module SceneManager
-  # Register the overwritten method only if the SES Core is installed.
-  class << self ; overwrite :run if respond_to?(:overwrite) ; end
-    
-  # The starting point of a running RGSS3 game.
-  # 
-  # @note This method was overridden out of necessity -- the original method
-  #   provides both the entry point _and_ the main loop, making it impossible
-  #   to provide exception handling only for the main loop without causing the
-  #   game to restart on each handled exception.
-  # 
-  # @return [void]
-  def self.run(*args, &block)
-    DataManager.init
-    Audio.setup_midi if use_midi?
-    @scene = first_scene_class.new
-    SES::Backtrace.with_exception_handling { @scene.main while @scene }
   end
 end
 # Game_Interpreter
@@ -262,6 +239,8 @@ class Object
   # @return [void]
   def rgss_main(*args, &block)
     SES::Backtrace.reset_block = block
-    ses_backtrace_obj_main(*args, &block)
+    SES::Backtrace.with_exception_handling do
+      ses_backtrace_obj_main(*args, &block)
+    end
   end
 end

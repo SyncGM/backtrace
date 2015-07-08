@@ -27,6 +27,5 @@ you are using it) or the Materials header, but above Main. This script does
 not require the SES Core, but it is highly recommended.
 
   Place this script below any script which aliases or overwrites the 
-`Game_Interpreter#update` or `SceneManager.run` methods for maximum
-compatibility.
+`Game_Interpreter#update` method for maximum compatibility.
 
