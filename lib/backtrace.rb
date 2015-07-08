@@ -1,5 +1,5 @@
 #--
-# Backtrace v1.4 by Solistra
+# Backtrace v1.5 by Solistra
 # =============================================================================
 # 
 # Summary
@@ -188,7 +188,7 @@ module SES
     # Register this script with the SES Core if it exists.
     if SES.const_defined?(:Register)
       # Script metadata.
-      Description = Script.new(:Backtrace, 1.4, :Solistra)
+      Description = Script.new(:Backtrace, 1.5, :Solistra)
       Register.enter(Description)
     end
   end

@@ -1,5 +1,5 @@
 
-Backtrace v1.4 by Solistra
+Backtrace v1.5 by Solistra
 =============================================================================
 
 Summary
